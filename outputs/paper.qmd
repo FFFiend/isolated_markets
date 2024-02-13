@@ -1,0 +1,8 @@
+---
+title: "Deeper investigation into the Isolated Markets of Greece"
+author: "Owais Zahid"
+date: 02-13-2024
+date-format: long
+format: pdf
+editor: visual
+---

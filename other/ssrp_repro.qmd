@@ -1,0 +1,83 @@
+---
+title: "Minimal SSRP Reproduction on *Competition and Pass-Through: Evidence from Isolated Markets"
+author: "Owais Zahid"
+date: 02-13-2024
+date-format: long
+format: pdf
+editor: visual
+---
+These are 2 figures, and a table reproduced from the aforementioned paper using the R programming language, RStudio, and the dplyr and ggplot2 packages. (CITE)
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+library(haven)
+
+# Set working directory-
+# Load the .dta file into a dataframe
+
+data <- read_dta("inputs/main_islands.dta")
+
+head(data)
+
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+
+# Assuming your dataframe is named 'data'
+# Generate island_dup variable similar to Stata code
+data <- data %>%
+  group_by(island) %>%
+  mutate(island_dup = ifelse(row_number() == 1, 0, row_number()))
+
+# Drop observations where island_dup > 1
+data <- data %>% filter(island_dup <= 1)
+
+# Plot 1: Island size vs Number of gas stations
+plot1 <- ggplot(data, aes(x = size, y = gs)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  xlab("Island size (km sq)") +
+  ylab("Number of gas stations") +
+  theme_minimal()
+
+# Plot 2: Island population vs Number of gas stations
+plot2 <- ggplot(data, aes(x = population, y = gs)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  xlab("Island population") +
+  ylab("Number of gas stations") +
+  theme_minimal()
+
+# Display plots
+plot1
+plot2
+####
+# Load packages
+library(haven)
+library(dplyr)
+
+# Load data
+df = read_dta("main_islands.dta")
+# Filter data for the specified date ranges
+filtered_data <- df %>%
+  filter((date >= 18293 & date <= 18313) |
+           (date >= 18315 & date <= 18335) |
+           (date >= 18375 & date <= 18395))
+
+# Calculate summary statistics by product_type
+summary_stats <- filtered_data %>%
+  group_by(product_type) %>%
+  summarize(mean = mean(new_price, na.rm = TRUE),
+            sd = sd(new_price, na.rm = TRUE),
+            median = quantile(new_price, 0.50, na.rm = TRUE),
+            p10 = quantile(new_price, 0.10, na.rm = TRUE),
+            p90 = quantile(new_price, 0.90, na.rm = TRUE))
+
+
+summary_stats = summary_stats %>%
+  arrange(desc(row_number()))
+
+summary_stats
+```
